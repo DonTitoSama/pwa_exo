@@ -23,39 +23,46 @@ document.addEventListener("DOMContentLoaded", function() {
         // Vérifier si le terme de recherche existe dans l'historique
         if (searchHistory.includes(searchTerm)) {
             // Effectuer la recherche
-            fetch('https://api.tvmaze.com/singlesearch/shows?q=' + searchTerm)
-                .then(response => response.json())
-                .then(data => {
-                    displaySearchResults(data);
-                })
-                .catch(error => {
-                    console.error('Erreur dans la requête : ', error);
-                });
+            searchShows(searchTerm);
         } else {
             // Afficher une erreur si le terme de recherche n'existe pas dans l'historique
             displayErrorMessage("Cette série n'a pas été recherchée auparavant.");
         }
     });
 
+    // Fonction pour rechercher les séries TV
+    function searchShows(searchTerm) {
+        fetch('https://api.tvmaze.com/search/shows?q=' + searchTerm)
+            .then(response => response.json())
+            .then(data => {
+                displaySearchResults(data);
+            })
+            .catch(error => {
+                console.error('Erreur dans la requête : ', error);
+            });
+    }
+
     // Afficher les résultats de la recherche
     function displaySearchResults(data) {
         var resultsContainer = document.getElementById('searchResults');
         resultsContainer.innerHTML = '';
-        var showName = data.name;
-        var showSummary = data.summary;
-        var showImage = data.image ? data.image.medium : 'Image non disponible.';
-
-        var showDiv = document.createElement('div');
-        showDiv.classList.add('card');
-        showDiv.innerHTML = `
-            <div class="card-body" style="text-align: center;">
-                <h5 class="card-title" style="font-size: smaller;">${showName}</h5>
-                <a href="https://api.tvmaze.com/singlesearch/shows?q=${showName}" target="_blank">
-                    <img id="image" src="${showImage}" alt="${showName}" class="card-img-top" style="max-width: 200px; margin: auto; cursor: pointer;" title="Accéder au json">
-                </a>
-                <p class="card-text" style="font-size: smaller;">${showSummary ? showSummary : 'No summary available'}</p>
-            </div>`;
-        resultsContainer.appendChild(showDiv);
+        data.forEach(result => {
+            var showName = result.show.name;
+            var showSummary = result.show.summary;
+            var showImage = result.show.image ? result.show.image.medium : 'Image non disponible.';
+        
+            var showDiv = document.createElement('div');
+            showDiv.classList.add('card');
+            showDiv.innerHTML = `
+                <div class="card-body" style="text-align: center;">
+                    <h5 class="card-title" style="font-size: smaller;">${showName}</h5>
+                    <a href="https://api.tvmaze.com/singlesearch/shows?q=${showName}" target="_blank">
+                        <img id="image" src="${showImage}" alt="${showName}" class="card-img-top" style="max-width: 200px; margin: auto; cursor: pointer;" title="Accéder au json">
+                    </a>
+                    <p class="card-text" style="font-size: smaller;">${showSummary ? showSummary : 'No summary available'}</p>
+                </div>`;
+            resultsContainer.appendChild(showDiv);
+        });
     }
 
     // Afficher un message d'erreur
