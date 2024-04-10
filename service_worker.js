@@ -3,7 +3,8 @@ const HOST = location.protocol + '//' + location.host;
 const FILECACHE = [
     HOST + "/css/bootstrap.css",
     HOST + "/js/form.js",
-    HOST + "/manifest.json"
+    HOST + "/manifest.json",
+    HOST + "/offline/games.html"
 ];
 
 self.addEventListener("install", (e) => {
@@ -32,6 +33,7 @@ self.addEventListener("install", (e) => {
     );
 });
 
+
 self.addEventListener('activate', (e) => {
     e.waitUntil(
         (async () => {
@@ -45,10 +47,11 @@ self.addEventListener('activate', (e) => {
     );
 });
 
+
 self.addEventListener("fetch", (e) => {
     console.log("Fetch:", e.request.url);
 
-    if (e.request.mode === "navigate") {
+    if (e.request.mode === "navigate" && !e.request.url.endsWith('games.html')) {
         e.respondWith(
             (async () => {
                 try {
@@ -59,11 +62,16 @@ self.addEventListener("fetch", (e) => {
                 } catch (error) {
                     console.error("Fetch error:", error);
                     const cache = await caches.open(VERSION);
-                    return await cache.match("offline/index.html");
+                    return await cache.match("/offline/index.html");
                 }
             })()
         );
     } else if (FILECACHE.includes(e.request.url)) {
         e.respondWith(caches.match(e.request));
     }
+
+    if(e.request.url.endsWith('games.html')) {
+        e.respondWith(caches.match("/offline/games.html"));
+    }
 });
+
