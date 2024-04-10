@@ -4,7 +4,8 @@ const FILECACHE = [
     HOST + "/css/bootstrap.css",
     HOST + "/js/form.js",
     HOST + "/manifest.json",
-    HOST + "/offline/games.html"
+    HOST + "/offline/games.html",
+    HOST + "/details.html"
 ];
 
 self.addEventListener("install", (e) => {

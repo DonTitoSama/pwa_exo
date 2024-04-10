@@ -69,10 +69,10 @@ document.addEventListener("DOMContentLoaded", function() {
             showDiv.innerHTML = `
                 <div class="card-body" style="text-align: center;">
                     <h5 class="card-title" style="font-size: smaller;">${showName}</h5>
-                    <a href="https://api.tvmaze.com/singlesearch/shows?q=${showName}" target="_blank">
-                        <img id="image" src="${showImage}" alt="${showName}" class="card-img-top" style="max-width: 200px; margin: auto; cursor: pointer;" title="Accéder au json">
+                    <a href="details.html?name=${encodeURIComponent(showName)}&image=${encodeURIComponent(showImage)}&summary=${encodeURIComponent(showSummary)}">
+                        <img class="show-image" src="${showImage}" alt="${showName}" class="card-img-top" style="max-width: 200px; margin: auto; cursor: pointer;" title="Voir les détails">
                     </a>
-                    <p class="card-text" style="font-size: smaller;">${showSummary ? showSummary : 'No summary available'}</p>
+                    <p class="card-text" style="font-size: smaller;">${showSummary ? showSummary : 'Pas de résumé disponible'}</p>
                 </div>`;
             resultsContainer.appendChild(showDiv);
         });
