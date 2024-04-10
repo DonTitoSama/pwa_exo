@@ -20,11 +20,21 @@ document.addEventListener("DOMContentLoaded", function() {
                         displaySearchResults(data);
                     });
                 } else {
-                    fetchSearchResults(searchTerm);
+                    if (navigator.onLine) { // Vérifier si en ligne
+                        fetchSearchResults(searchTerm);
+                    } else {
+                        // Gérer l'affichage d'un message d'erreur ou d'une indication à l'utilisateur
+                        console.error('Vous êtes hors ligne et les données ne sont pas disponibles.');
+                    }
                 }
             });
         } else {
-            fetchSearchResults(searchTerm);
+            if (navigator.onLine) { // Vérifier si en ligne
+                fetchSearchResults(searchTerm);
+            } else {
+                // Gérer l'affichage d'un message d'erreur ou d'une indication à l'utilisateur
+                console.error('Vous êtes hors ligne et les données ne sont pas disponibles.');
+            }
         }
     }
 
@@ -41,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => {
             console.error('Erreur dans la requête : ', error);
+            // Gérer l'affichage d'un message d'erreur ou d'une indication à l'utilisateur
         });
     }
 
