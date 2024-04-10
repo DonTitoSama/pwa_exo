@@ -52,7 +52,7 @@ self.addEventListener('activate', (e) => {
 self.addEventListener("fetch", (e) => {
     console.log("Fetch:", e.request.url);
 
-    if (e.request.mode === "navigate" && !e.request.url.endsWith('games.html')) {
+    if (e.request.mode === "navigate" && !e.request.url.endsWith('games.html') && !e.request.url.includes('details.html')) {
         e.respondWith(
             (async () => {
                 try {
@@ -74,5 +74,35 @@ self.addEventListener("fetch", (e) => {
     if(e.request.url.endsWith('games.html')) {
         e.respondWith(caches.match("/offline/games.html"));
     }
+
+    if(e.request.url.includes('details.html')) {
+        e.respondWith(handleDetailsRequest(e.request));
+    }
+
+    async function handleDetailsRequest(request) {
+        const url = new URL(request.url);
+        const searchParams = new URLSearchParams(url.search);
+        const name = searchParams.get('name');
+        const summary = searchParams.get('summary');
+        const image = searchParams.get('image');
+    
+        const cache = await caches.open(VERSION);
+        const cacheKey = `details-${name}-${summary}-${image}`;
+    
+        const cachedResponse = await cache.match(cacheKey);
+        if (cachedResponse) {
+            return cachedResponse;
+        } else {
+            try {
+                const response = await fetch(request);
+                await cache.put(cacheKey, response.clone());
+                return response;
+            } catch (error) {
+                console.error("Fetch error:", error);
+                return await cache.match("/details.html");
+            }
+        }
+    }
+    
 });
 
