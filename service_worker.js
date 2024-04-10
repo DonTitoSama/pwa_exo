@@ -2,7 +2,7 @@ const VERSION = "v14";
 const HOST = location.protocol + '//' + location.host;
 const FILECACHE = [
     HOST + "/css/bootstrap.css",
-    HOST + "/js/offline_form.js"
+    HOST + "/js/form.js"
 ];
 
 self.addEventListener("install", (e) => {

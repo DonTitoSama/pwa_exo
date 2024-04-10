@@ -1,36 +1,52 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-    // Écoute à la validation (bouton rechercher) du formulaire
     document.getElementById('searchForm').addEventListener('submit', function(event) {
-
         event.preventDefault(); // empêche la soumission du formulaire
-
         var searchTerm = document.getElementById('searchInput').value;
-
-        // Si le champs est vide ou contient seulement un espace, afficher une alerte
         if (!searchTerm || searchTerm.trim().length === 0) {
             alert("Veuillez saisir une valeur.");
             return;
         }         
 
-        addToSearchHistory(searchTerm);
-
-        fetch('https://api.tvmaze.com/search/shows?q=' + searchTerm)
-            .then(response => response.json())
-            .then(data => {
-                displaySearchResults(data);
-            })
-            .catch(error => {
-                console.error('Erreur dans la requête : ', error);
-            });
+        fetchAndDisplayResults(searchTerm);
+        saveSearchTerm(searchTerm); // Enregistrer la recherche
     });
 
+    function fetchAndDisplayResults(searchTerm) {
+        if ('caches' in window) {
+            caches.match('search-' + searchTerm).then(function(response) {
+                if (response) {
+                    response.json().then(function(data) {
+                        displaySearchResults(data);
+                    });
+                } else {
+                    fetchSearchResults(searchTerm);
+                }
+            });
+        } else {
+            fetchSearchResults(searchTerm);
+        }
+    }
 
-    // Affiche les informations
+    function fetchSearchResults(searchTerm) {
+        fetch('https://api.tvmaze.com/search/shows?q=' + searchTerm)
+        .then(response => response.json())
+        .then(data => {
+            displaySearchResults(data);
+            if ('caches' in window) {
+                caches.open('searches-cache').then(function(cache) {
+                    cache.put('search-' + searchTerm, new Response(JSON.stringify(data)));
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erreur dans la requête : ', error);
+        });
+    }
+
     function displaySearchResults(data) {
         var resultsContainer = document.getElementById('searchResults');
         resultsContainer.innerHTML = '';
-
         data.forEach(function(result) {
             var showName = result.show.name;
             var showSummary = result.show.summary;
@@ -50,15 +66,28 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Fonction pour ajouter un terme de recherche à l'historique
-    function addToSearchHistory(searchTerm) {
-        var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-        // Vérifier si le terme de recherche existe déjà dans l'historique
-        if (!searchHistory.includes(searchTerm)) {
-            // Ajouter le terme de recherche à l'historique
-            searchHistory.push(searchTerm);
-            // Mettre à jour le localStorage avec le nouvel historique
-            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    function saveSearchTerm(searchTerm) {
+        var searchHistory = localStorage.getItem('searchHistory');
+        searchHistory = searchHistory ? JSON.parse(searchHistory) : [];
+        searchHistory.push(searchTerm);
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    }
+
+    // Fonction pour afficher l'historique des recherches en mode hors ligne
+    function displayOfflineResults() {
+        var offlineResultsContainer = document.getElementById('offlineResults');
+        offlineResultsContainer.innerHTML = '';
+        var searchHistory = localStorage.getItem('searchHistory');
+        if (searchHistory) {
+            searchHistory = JSON.parse(searchHistory);
+            searchHistory.forEach(function(term) {
+                var termDiv = document.createElement('div');
+                termDiv.textContent = term;
+                offlineResultsContainer.appendChild(termDiv);
+            });
         }
     }
+
+    // Appel à la fonction pour afficher l'historique des recherches dès que la page est chargée
+    displayOfflineResults();
 });
