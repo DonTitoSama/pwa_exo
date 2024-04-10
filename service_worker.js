@@ -2,7 +2,8 @@ const VERSION = "v14";
 const HOST = location.protocol + '//' + location.host;
 const FILECACHE = [
     HOST + "/css/bootstrap.css",
-    HOST + "/js/form.js"
+    HOST + "/js/form.js",
+    HOST + "/manifest.json"
 ];
 
 self.addEventListener("install", (e) => {
