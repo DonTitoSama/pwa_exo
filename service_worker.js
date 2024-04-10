@@ -2,7 +2,7 @@ const VERSION = "v14";
 const HOST = location.protocol + '//' + location.host;
 const FILECACHE = [
     HOST + "/css/bootstrap.css",
-    HOST + "/js/offline_form.js",
+    HOST + "/js/offline_form.js"
 ];
 
 self.addEventListener("install", (e) => {
@@ -15,7 +15,7 @@ self.addEventListener("install", (e) => {
 
             try {
                 await Promise.all(
-                    [...FILECACHE, './offline.html'].map(async (path) => {
+                    [...FILECACHE, './offline/index.html'].map(async (path) => {
                         try {
                             await cache.add(path);
                             console.log("Cached:", path);
@@ -58,7 +58,7 @@ self.addEventListener("fetch", (e) => {
                 } catch (error) {
                     console.error("Fetch error:", error);
                     const cache = await caches.open(VERSION);
-                    return await cache.match("offline.html");
+                    return await cache.match("offline/index.html");
                 }
             })()
         );

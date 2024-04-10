@@ -47,8 +47,6 @@ document.addEventListener("DOMContentLoaded", function() {
         resultsContainer.appendChild(showDiv);
     }
 
-
-
     // Fonction pour ajouter un terme de recherche à l'historique
     function addToSearchHistory(searchTerm) {
         var searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
