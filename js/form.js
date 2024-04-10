@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }         
 
         fetchAndDisplayResults(searchTerm);
-        saveSearchTerm(searchTerm); // Enregistrer la recherche
+        saveSearchTermOnline(searchTerm); // Enregistrer la recherche uniquement si en ligne
     });
 
     function fetchAndDisplayResults(searchTerm) {
@@ -66,11 +66,13 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function saveSearchTerm(searchTerm) {
-        var searchHistory = localStorage.getItem('searchHistory');
-        searchHistory = searchHistory ? JSON.parse(searchHistory) : [];
-        searchHistory.push(searchTerm);
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    function saveSearchTermOnline(searchTerm) {
+        if (navigator.onLine) { // Vérifier si en ligne
+            var searchHistory = localStorage.getItem('searchHistory');
+            searchHistory = searchHistory ? JSON.parse(searchHistory) : [];
+            searchHistory.push(searchTerm);
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        }
     }
 
     // Fonction pour afficher l'historique des recherches en mode hors ligne
