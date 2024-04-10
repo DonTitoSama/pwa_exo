@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
         saveSearchTermOnline(searchTerm); // Enregistrer la recherche uniquement si en ligne
     });
 
+
     function fetchAndDisplayResults(searchTerm) {
         if ('caches' in window) {
             caches.match('search-' + searchTerm).then(function(response) {
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
         data.forEach(function(result) {
             var showName = result.show.name;
             var showSummary = result.show.summary;
-            var showImage = result.show.image ? result.show.image.medium : 'Image non disponible.';
+            var showImage = result.show.image ? result.show.image.medium : '';
 
             var showDiv = document.createElement('div');
             showDiv.classList.add('card');
@@ -88,16 +89,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Fonction pour afficher l'historique des recherches en mode hors ligne
     function displayOfflineResults() {
-        var offlineResultsContainer = document.getElementById('offlineResults');
-        offlineResultsContainer.innerHTML = '';
-        var searchHistory = localStorage.getItem('searchHistory');
-        if (searchHistory) {
-            searchHistory = JSON.parse(searchHistory);
-            searchHistory.forEach(function(term) {
-                var termDiv = document.createElement('div');
-                termDiv.textContent = term;
-                offlineResultsContainer.appendChild(termDiv);
-            });
+        if (!navigator.onLine) { 
+            var offlineResultsContainer = document.getElementById('offlineResults');
+            if (offlineResultsContainer) {
+                offlineResultsContainer.innerHTML = '';
+            }
+            var searchHistory = localStorage.getItem('searchHistory');
+            if (searchHistory) {
+                searchHistory = JSON.parse(searchHistory);
+                searchHistory.forEach(function(term) {
+                    var termDiv = document.createElement('div');
+                    termDiv.textContent = term;
+                    offlineResultsContainer.appendChild(termDiv);
+                });
+            }
         }
     }
 
