@@ -1,4 +1,4 @@
-const VERSION = "v14";
+const VERSION = "v1";
 const HOST = location.protocol + '//' + location.host;
 const FILECACHE = [
     HOST + "/css/bootstrap.css",
