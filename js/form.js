@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (navigator.onLine) { // Vérifier si en ligne
                         fetchSearchResults(searchTerm);
                     } else {
-                        // Gérer l'affichage d'un message d'erreur ou d'une indication à l'utilisateur
                         console.error('Vous êtes hors ligne et les données ne sont pas disponibles.');
+                        displayErrorMessage("Cette série n'a pas été recherchée auparavant.");
                     }
                 }
             });
@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function() {
             if (navigator.onLine) { // Vérifier si en ligne
                 fetchSearchResults(searchTerm);
             } else {
-                // Gérer l'affichage d'un message d'erreur ou d'une indication à l'utilisateur
                 console.error('Vous êtes hors ligne et les données ne sont pas disponibles.');
+                displayErrorMessage("Cette série n'a pas été recherchée auparavant.");
             }
         }
     }
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => {
             console.error('Erreur dans la requête : ', error);
-            // Gérer l'affichage d'un message d'erreur ou d'une indication à l'utilisateur
+            displayErrorMessage("Cette série n'a pas été recherchée auparavant.");
         });
     }
 
@@ -99,6 +99,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 offlineResultsContainer.appendChild(termDiv);
             });
         }
+    }
+
+    // Afficher un message d'erreur
+    function displayErrorMessage(message) {
+        var errorContainer = document.getElementById('searchResults');
+        errorContainer.innerHTML = '<div class="alert alert-danger" role="alert">' + message + '</div>';
     }
 
     // Appel à la fonction pour afficher l'historique des recherches dès que la page est chargée
