@@ -63,4 +63,9 @@ document.addEventListener("DOMContentLoaded", function() {
         var errorContainer = document.getElementById('searchResults');
         errorContainer.innerHTML = '<div class="alert alert-danger" role="alert">' + message + '</div>';
     }
+
+    document.getElementById('games').addEventListener('click', function() {
+        window.location.href= "";
+    });
+
 });
